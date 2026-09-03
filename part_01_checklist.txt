@@ -1,0 +1,61 @@
+# Sizzle Stack — Project 1 Execution Checklist
+
+## 1. Design & Documentation Setup
+- [ ] Fork and clone the GitHub Classroom starter repo: `https://classroom.github.com/a/lsnZIfdZ`
+- [ ] Draw low-fi wireframes (paper sketches or basic mockups) for 2 core screens:
+  - **Screen A (Recipe Manager):** Form to enter recipe title, ingredients, amounts, and units.
+  - **Screen B (Aggregated Cart):** The combined grocery list with checkable items.
+- [ ] Save photos/screenshots of wireframes in a `/assets/wireframes` folder.
+- [ ] Create a `README.md` containing:
+  - Project description & overview
+  - Embedded wireframe images (`![Wireframe](./assets/wireframes/wireframe1.png)`)
+  - A dedicated section listing **at least 2 external Expo packages** used.
+
+---
+
+## 2. Navigation & Architecture (Expo Router)
+- [ ] Set up file-based routing inside the `/app` directory:
+  - `app/index.tsx` — Recipe Creator & Saved Recipes Screen
+  - `app/cart.tsx` — Auto-Aggregated Shopping List Screen
+- [ ] Pass recipe data between screens using Expo Router params (e.g., passing selected recipe JSON to `/cart`).
+- [ ] Break UI down into clean, reusable components in `/components`:
+  - `<RecipeCard />`
+  - `<IngredientInputRow />`
+  - `<CartItemTile />`
+
+---
+
+## 3. UI Components & Inputs
+- [ ] Implement required core elements:
+  - `View` for structural layout.
+  - `Text` for titles, labels, and quantities.
+  - `Pressable` / `TouchableOpacity` / `Button` for actions (Add, Delete, Checkout).
+- [ ] Implement user input controls:
+  - `TextInput` for recipe titles, ingredient names, and quantities.
+  - A secondary input component (e.g., `Picker` / `Dropdown` for selecting units like cups, tbsp, cloves, lbs).
+
+---
+
+## 4. State Management & User Feedback
+- [ ] Manage local app state with `useState`:
+  - Store recipe lists, selected items, and active input fields.
+- [ ] Utilize `useEffect`:
+  - Trigger the **ingredient auto-aggregation logic** whenever the selected recipe set changes (e.g., automatically combining `2 cloves garlic` + `3 cloves garlic` $\rightarrow$ `5 cloves garlic`).
+- [ ] Provide clear UI feedback on user actions:
+  - Show a confirmation banner/toast when a recipe is added.
+  - Strike through or highlight items in the cart when tapped/checked off.
+
+---
+
+## 5. External Expo Packages (Min. 2 Required)
+- [ ] **Package 1:** `@expo/vector-icons` (for cart, add, delete, and checkmark icons).
+- [ ] **Package 2:** `@react-native-picker/picker` or `react-native-element-dropdown` (for unit selections).
+- [ ] Ensure all installed packages are documented in `README.md`.
+
+---
+
+## 6. Final Polish & Submission Checklist
+- [ ] Test cross-screen data passing and state updating on both iOS and Android emulators.
+- [ ] Ensure styling looks clean, professional, and well-aligned.
+- [ ] Commit and push all code and assets to your GitHub repository.
+- [ ] Submit the public GitHub repository URL on Canvas prior to **Sat, Sep 19, 2026 at 11:59 PM**.

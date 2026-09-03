@@ -1,0 +1,60 @@
+======================================================================
+PROJECT: Sizzle Stack (Mobile App)
+TECH STACK: React Native (iOS & Android) | SQLite (Local-First) + Cloud Sync
+AUTHOR: Pre-Launch Specification
+======================================================================
+
+1. CORE USER MANAGEMENT (AUTH & PROFILE)
+----------------------------------------------------------------------
+[ ] 1.1 Authentication
+    - User sign-up, login, and logout (Email/Password or OAuth).
+    - JWT/Session token persistence across app restarts.
+[ ] 1.2 User Profile (Local & Cloud Sync)
+    - Store basic profile data: user_id, display_name, email, created_at.
+    - Foundation for future social features: profile_picture_url, bio.
+
+2. RECIPE MANAGEMENT (CRUD)
+----------------------------------------------------------------------
+[ ] 2.1 Recipe Creation & Editing
+    - Manual entry: Title, prep_time, cook_time, servings, image_url.
+    - Structured Ingredients: Name, quantity, unit (e.g., "2", "cloves", "garlic").
+    - Categorization: Tags (e.g., High-Protein, Dinner, Prep-Friendly).
+[ ] 2.2 Recipe Storage & Viewing
+    - View personal saved recipes in a clean list or grid view.
+    - Recipe Detail View: Full ingredient list, instructions, and portion scaling.
+[ ] 2.3 Recipe Sharing Foundation
+    - One-tap "Share Recipe" generator: Generates a unique shareable link or code.
+    - Deep Linking / Import: Opening a shared link imports that recipe into another user's account.
+    - Database Flag: `is_public` (boolean) on recipe schema to easily enable a public marketplace post-launch.
+
+3. DYNAMIC SHOPPING CART & AGGREGATION
+----------------------------------------------------------------------
+[ ] 3.1 Recipe Selection for Shopping
+    - "Add to Shopping List" action from any recipe view.
+    - Multi-recipe selection: Select multiple recipes to build a combined batch trip.
+[ ] 3.2 Automated Ingredient Merging (Core Magic Feature)
+    - Combine duplicate ingredients automatically (e.g., 2 cloves garlic + 3 cloves garlic = 5 cloves garlic).
+    - Unit aggregation where units match (e.g., 1/2 cup + 1/4 cup = 3/4 cup).
+[ ] 3.3 Shopping Cart UX & Execution
+    - Interactive Checklist: Tap item to mark as bought / crossed off.
+    - Categorization: Group items by store section (Produce, Dairy, Meat, Dry Goods).
+    - Offline Persistence: Shopping list remains fully functional without an active cellular connection.
+    - Clear List / Reset: Archive or clear items once shopping trip is finished.
+
+4. DATABASE SCHEMA & DATA PERSISTENCE
+----------------------------------------------------------------------
+[ ] 4.1 Local SQLite Tables
+    - users (id, email, display_name, created_at)
+    - recipes (id, user_id, title, instructions, servings, is_public, share_code, created_at)
+    - ingredients (id, recipe_id, name, quantity, unit, category)
+    - shopping_list (id, user_id, ingredient_name, combined_quantity, unit, category, is_purchased)
+[ ] 4.2 Cloud Sync & Multi-Device Support
+    - Background sync engine to mirror local SQLite changes to cloud server.
+    - Account restoration: Logging in on a new device fetches saved user recipes and active shopping lists.
+
+5. NON-FUNCTIONAL REQUIREMENTS
+----------------------------------------------------------------------
+[ ] 5.1 Cross-Platform Build: Functional deployment targets on both iOS and Google Play/Android.
+[ ] 5.2 Performance: Fast, sub-second recipe list rendering and instant check-off speed in shopping mode.
+[ ] 5.3 Offline Reliability: Full read/write access to recipes and active shopping list without internet.
+======================================================================
