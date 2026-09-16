@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 export default function Account() {
   return (
     <View style={styles.container}>
-      <Text>Mike Winslow</Text>
+      <Text>Dominic Dodge</Text>
     </View>
   );
 }
