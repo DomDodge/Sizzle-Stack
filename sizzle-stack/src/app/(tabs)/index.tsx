@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   recipe: {
     width: "47%",
-    height: 130,
+    height: 115,
     backgroundColor: Colors.mintGreen,
     borderRadius: 12,
     padding: 12,

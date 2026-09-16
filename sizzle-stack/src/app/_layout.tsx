@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 
 export default function RootLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, headerBackTitle: 'Back' }}>
       {/* Main Tab Navigation */}
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
