@@ -1,9 +1,22 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from "react-native";
 import { Colors } from '../constants/Colors';
+import type { Ingredient } from '../context/recipe_context';
 
 export default function RecipeDetails() {
-  const { title, instructions } = useLocalSearchParams<{ title: string, instructions: string }>();
+  const { title, instructions, ingredients } = useLocalSearchParams<{
+    title: string;
+    instructions: string;
+    ingredients: string;
+  }>();
+
+  let parsedIngredients: Ingredient[] = [];
+
+  try {
+    parsedIngredients = ingredients ? JSON.parse(ingredients) : [];
+  } catch (e) {
+    console.warn('Failed to parse ingredients param', e);
+  }
 
   return (
       <View style={styles.container}>
@@ -13,6 +26,12 @@ export default function RecipeDetails() {
             <Text>
               {instructions}
             </Text>
+
+            {parsedIngredients.map((ing, idx) => (
+              <Text key={idx}>
+                {ing.amount} {ing.unit} {ing.name}
+              </Text>
+            ))}
           </View>
       </View>
   )

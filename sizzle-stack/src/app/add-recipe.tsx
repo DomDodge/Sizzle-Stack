@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useState } from 'react';
 import {
   Keyboard,
@@ -6,14 +7,18 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from 'react-native';
+import { useRecipes } from '../context/recipe_context';
 import IngredientsInput, { IngredientItem } from './components/IngredientsInput';
 import InstructionsInput from './components/InstructionsInput';
 import TitleInput from './components/TitleInput';
 
+
 export default function AddRecipeScreen() {
+  const { addRecipe } = useRecipes();
   const [title, setTitle] = useState('');
+  const router = useRouter();
   const [ingredients, setIngredients] = useState<IngredientItem[]>([
     { amount: '', unit: 'tsp', name: '' },
   ]);
@@ -28,14 +33,13 @@ export default function AddRecipeScreen() {
   const handleSubmit = () => {
     if (!isFormValid) return;
 
-    const recipeData = {
+    addRecipe({
       title: title.trim(),
-      // Filter out any ingredient rows where the name is completely empty
       ingredients: ingredients.filter((item) => item.name.trim() !== ''),
       instructions: instructions.trim(),
-    };
+    });
 
-    console.log('Recipe Submitted:', recipeData);
+    router.back();
   };
 
   return (

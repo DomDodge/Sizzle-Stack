@@ -1,5 +1,14 @@
 import { Picker } from '@react-native-picker/picker';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import {
+  Modal,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export interface IngredientItem {
   amount: string;
@@ -12,23 +21,14 @@ interface IngredientsInputProps {
   onChangeIngredients: (ingredients: IngredientItem[]) => void;
 }
 
-const UNITS = [
-  'tsp',
-  'tbsp',
-  'cup',
-  'oz',
-  'lb',
-  'g',
-  'ml',
-  'clove',
-  'pinch',
-  'piece',
-];
+const UNITS = ['tsp', 'tbsp', 'cup', 'oz', 'lb', 'g', 'ml', 'clove', 'pinch', 'piece'];
 
 export default function IngredientsInput({
   ingredients,
   onChangeIngredients,
 }: IngredientsInputProps) {
+  const [activePickerIndex, setActivePickerIndex] = useState<number | null>(null);
+
   const handleUpdate = (field: keyof IngredientItem, value: string, index: number) => {
     const updated = [...ingredients];
     updated[index] = { ...updated[index], [field]: value };
@@ -41,8 +41,7 @@ export default function IngredientsInput({
 
   const handleRemove = (index: number) => {
     if (ingredients.length === 1) return;
-    const updated = ingredients.filter((_, i) => i !== index);
-    onChangeIngredients(updated);
+    onChangeIngredients(ingredients.filter((_, i) => i !== index));
   };
 
   return (
@@ -51,7 +50,6 @@ export default function IngredientsInput({
 
       {ingredients.map((item, index) => (
         <View key={index} style={styles.row}>
-          {/* 1. Amount Input */}
           <TextInput
             style={styles.amountInput}
             placeholder="Qty"
@@ -61,20 +59,59 @@ export default function IngredientsInput({
             returnKeyType="done"
           />
 
-          {/* 2. Unit Picker */}
-          <View style={styles.pickerWrapper}>
-            <Picker
-              selectedValue={item.unit}
-              onValueChange={(value) => handleUpdate('unit', value, index)}
-              style={styles.picker}
-            >
-              {UNITS.map((unit) => (
-                <Picker.Item key={unit} label={unit} value={unit} />
-              ))}
-            </Picker>
-          </View>
+          {Platform.OS === 'ios' ? (
+            <>
+              <TouchableOpacity
+                style={styles.pickerWrapper}
+                onPress={() => setActivePickerIndex(index)}
+              >
+                <Text style={styles.pickerButtonText}>{item.unit}</Text>
+              </TouchableOpacity>
 
-          {/* 3. Name Input */}
+              <Modal
+                visible={activePickerIndex === index}
+                transparent
+                animationType="slide"
+                onRequestClose={() => setActivePickerIndex(null)}
+              >
+                <TouchableOpacity
+                  style={styles.modalOverlay}
+                  activeOpacity={1}
+                  onPress={() => setActivePickerIndex(null)}
+                >
+                  <View style={styles.modalContent}>
+                    <View style={styles.modalHeader}>
+                      <TouchableOpacity onPress={() => setActivePickerIndex(null)}>
+                        <Text style={styles.doneText}>Done</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <Picker
+                      selectedValue={item.unit}
+                      onValueChange={(value) => handleUpdate('unit', value, index)}
+                    >
+                      {UNITS.map((unit) => (
+                        <Picker.Item key={unit} label={unit} value={unit} />
+                      ))}
+                    </Picker>
+                  </View>
+                </TouchableOpacity>
+              </Modal>
+            </>
+          ) : (
+            <View style={styles.pickerWrapperAndroid}>
+              <Picker
+                selectedValue={item.unit}
+                onValueChange={(value) => handleUpdate('unit', value, index)}
+                style={styles.picker}
+                mode="dropdown"
+              >
+                {UNITS.map((unit) => (
+                  <Picker.Item key={unit} label={unit} value={unit} />
+                ))}
+              </Picker>
+            </View>
+          )}
+
           <TextInput
             style={styles.nameInput}
             placeholder="Ingredient name"
@@ -83,12 +120,8 @@ export default function IngredientsInput({
             returnKeyType="done"
           />
 
-          {/* Remove Button */}
           {ingredients.length > 1 && (
-            <TouchableOpacity
-              style={styles.removeButton}
-              onPress={() => handleRemove(index)}
-            >
+            <TouchableOpacity style={styles.removeButton} onPress={() => handleRemove(index)}>
               <Text style={styles.removeText}>✕</Text>
             </TouchableOpacity>
           )}
@@ -105,12 +138,7 @@ export default function IngredientsInput({
 const styles = StyleSheet.create({
   container: { marginBottom: 20 },
   label: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    gap: 6,
-  },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 10, gap: 6 },
   amountInput: {
     width: 60,
     borderWidth: 1,
@@ -121,15 +149,37 @@ const styles = StyleSheet.create({
   },
   pickerWrapper: {
     width: 105,
+    height: 44,
+    borderWidth: 1,
+    borderColor: '#CCC',
+    borderRadius: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  pickerWrapperAndroid: {
+    width: 105,
     borderWidth: 1,
     borderColor: '#CCC',
     borderRadius: 8,
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  picker: {
-    height: 44,
+  picker: { height: 44 },
+  pickerButtonText: { fontSize: 15 },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.3)',
   },
+  modalContent: { backgroundColor: '#fff' },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  doneText: { color: '#007AFF', fontSize: 16, fontWeight: '600' },
   nameInput: {
     flex: 1,
     borderWidth: 1,
@@ -138,9 +188,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 15,
   },
-  removeButton: {
-    paddingHorizontal: 6,
-  },
+  removeButton: { paddingHorizontal: 6 },
   removeText: { color: '#FF3B30', fontSize: 18, fontWeight: 'bold' },
   addButton: { marginTop: 4, alignSelf: 'flex-start' },
   addText: { color: '#007AFF', fontSize: 16, fontWeight: '500' },

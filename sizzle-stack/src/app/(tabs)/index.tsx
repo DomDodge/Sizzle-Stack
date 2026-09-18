@@ -1,62 +1,35 @@
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Colors } from '../../constants/Colors';
+import { Ingredient, useRecipes } from '../../context/recipe_context';
 
-const tempData = [
-  {
-    name: "Lime Rice",
-    instructions: "Cook for 1000 seconds on high",
-    ingredients: [
-      {measurment: 1, unit: "tablespoon", name: "borax"}
-    ]
-  },
-  {
-    name: "Tacos",
-    instructions: "Cook for 10000 seconds on high",
-    ingredients: [
-      {measurment: 2, unit: "teaspoons", name: "borax"}
-    ]
-  },
-  {
-    name: "Pasta",
-    instructions: "Cook for 100000 seconds on high",
-    ingredients: [
-      {measurment: 5, unit: "gallons", name: "borax"}
-    ]
-  }
-]
 
 export default function Index() {
   const router = useRouter();
+  const { recipes } = useRecipes();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-
       <Pressable style={styles.newRecipe} onPress={() => router.push('/add-recipe')}>
         <Text style={styles.buttonText}>+ Add a Recipe</Text>
       </Pressable>
 
       <View style={styles.recipeList}>
-        {tempData.map((item) => (
-          <RecipeBox 
-            key={item.name} 
-            title={item.name}
-            instructions={item.instructions}
-          />
+        {recipes.map((item) => (
+          <RecipeBox key={item.title} title={item.title} instructions={item.instructions} ingredients={item.ingredients} />
         ))}
-
       </View>
     </ScrollView>
   );
 }
 
-function RecipeBox({ title, instructions }: { title: string, instructions: string }) {
+function RecipeBox({ title, instructions, ingredients }: { title: string, instructions: string, ingredients: Ingredient[] }) {
   const router = useRouter();
 
   return (
     <Pressable 
       style={styles.recipe} 
-      onPress={() => router.push({ pathname: '/recipe-detail', params: { title, instructions } })}
+      onPress={() => router.push({ pathname: '/recipe-detail', params: { title, instructions, ingredients: JSON.stringify(ingredients) } })}
     >
       <Text style={styles.recipeText}>{title}</Text>
     </Pressable>
