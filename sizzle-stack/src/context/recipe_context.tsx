@@ -9,6 +9,7 @@ export interface Ingredient {
 export interface Recipe {
   title: string;
   instructions: string;
+  image: string;
   ingredients: Ingredient[];
 }
 
@@ -23,11 +24,13 @@ const initialData: Recipe[] = [
   {
     title: "Lime Rice",
     instructions: "Cook for 1000 seconds on high",
+    image: "rice.jpg",
     ingredients: [{ amount: "1", unit: "tablespoon", name: "borax" }],
   },
   {
     title: "Tacos",
     instructions: "Cook for 10000 seconds on high",
+    image: "taco.jpg",
     ingredients: [{ amount: "2", unit: "teaspoons", name: "borax" }],
   },
 ];

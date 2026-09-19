@@ -9,10 +9,10 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native';
+import IngredientsInput, { IngredientItem } from '../components/IngredientsInput';
+import InstructionsInput from '../components/InstructionsInput';
+import TitleInput from '../components/TitleInput';
 import { useRecipes } from '../context/recipe_context';
-import IngredientsInput, { IngredientItem } from './components/IngredientsInput';
-import InstructionsInput from './components/InstructionsInput';
-import TitleInput from './components/TitleInput';
 
 
 export default function AddRecipeScreen() {
@@ -36,6 +36,7 @@ export default function AddRecipeScreen() {
     addRecipe({
       title: title.trim(),
       ingredients: ingredients.filter((item) => item.name.trim() !== ''),
+      image: "rice.jpg",
       instructions: instructions.trim(),
     });
 

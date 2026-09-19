@@ -1,14 +1,19 @@
 import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, Text, View } from "react-native";
-import { Colors } from '../constants/Colors';
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import type { Ingredient } from '../context/recipe_context';
 
 export default function RecipeDetails() {
-  const { title, instructions, ingredients } = useLocalSearchParams<{
+  const { title, instructions, ingredients, image } = useLocalSearchParams<{
     title: string;
     instructions: string;
     ingredients: string;
+    image: string
   }>();
+
+  const FOOD_IMAGES: Record<string, any> = {
+    'rice.jpg': require('../../assets/food-images/rice.jpg'),
+    'taco.jpg': require('../../assets/food-images/taco.jpg'),
+  };
 
   let parsedIngredients: Ingredient[] = [];
 
@@ -20,7 +25,10 @@ export default function RecipeDetails() {
 
   return (
       <View style={styles.container}>
-          <View style={styles.imageHeader}></View>
+          <ImageBackground 
+            source={FOOD_IMAGES[image]}
+            style={styles.imageHeader}
+          />
           <View style={styles.innerContainer}>
             <Text style={styles.title}>{title || "food-name"}</Text>
             <Text>
@@ -42,7 +50,6 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   imageHeader: {
-    backgroundColor: Colors.mintGreen,
     width: "100%",
     height: 200,
   },
