@@ -1,17 +1,13 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { ActivityIndicator, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Colors } from '../../constants/Colors';
-import { Ingredient, useRecipes } from '../../context/recipe_context';
-
-const FOOD_IMAGES: Record<string, any> = {
-  'rice.jpg': require('../../../assets/food-images/rice.jpg'),
-  'taco.jpg': require('../../../assets/food-images/taco.jpg'),
-};
+import { Recipe, useRecipes } from '../../context/recipe_context';
 
 export default function Index() {
   const router = useRouter();
-  const { recipes } = useRecipes();
+  const { recipes, loading } = useRecipes();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -19,38 +15,40 @@ export default function Index() {
         <Text style={styles.buttonText}>+ Add a Recipe</Text>
       </Pressable>
 
-      <View style={styles.recipeList}>
-        {recipes.map((item) => (
-          <RecipeBox 
-            key={item.title} 
-            title={item.title} 
-            instructions={item.instructions} 
-            ingredients={item.ingredients} 
-            image={item.image} 
-          />
-        ))}
-      </View>
+      {loading ? (
+        <ActivityIndicator color={Colors.volsOrange} />
+      ) : recipes.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Ionicons name="restaurant-outline" size={40} color={Colors.textMuted} />
+          <Text style={styles.emptyText}>No recipes yet. Add your first one!</Text>
+        </View>
+      ) : (
+        <View style={styles.recipeList}>
+          {recipes.map((item) => (
+            <RecipeBox key={item.id} recipe={item} />
+          ))}
+        </View>
+      )}
     </ScrollView>
   );
 }
 
-function RecipeBox({ title, instructions, ingredients, image }: { title: string, instructions: string, ingredients: Ingredient[], image: string }) {
+function RecipeBox({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
-  
-  const imageSource = FOOD_IMAGES[image] ?? { uri: image };
+  const { id, title, image } = recipe;
 
   return (
     <Pressable 
       style={styles.recipeCard} 
-      onPress={() => router.push({ pathname: '/recipe-detail', params: { title, instructions, image: image, ingredients: JSON.stringify(ingredients) } })}
+      onPress={() => router.push({ pathname: '/recipe-detail', params: { id: String(id) } })}
     >
       <ImageBackground
-        source={imageSource}
+        source={image ? { uri: image } : undefined}
         style={styles.imageBackground}
         imageStyle={styles.imageStyle}
       >
         <LinearGradient
-          colors={['rgba(24, 28, 36, 0.0)', Colors.mintGreen]} 
+          colors={['rgba(24, 28, 36, 0.0)', 'rgba(22, 22, 22, 1)']} 
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.gradientOverlay}
@@ -79,6 +77,15 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 18,
+  },
+  emptyState: {
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 40,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: Colors.textMuted,
   },
   recipeList: {
     flexDirection: "row",

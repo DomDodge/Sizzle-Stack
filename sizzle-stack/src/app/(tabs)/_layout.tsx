@@ -31,15 +31,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="market"
-        options={{
-          title: 'Marketplace',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'share' : 'share-outline'} size={24} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="account"
         options={{
           title: 'My Account',

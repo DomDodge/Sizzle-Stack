@@ -1,4 +1,6 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import * as RecipesDb from '../db/recipes_db';
 
 export interface Ingredient {
   amount: string;
@@ -7,43 +9,62 @@ export interface Ingredient {
 }
 
 export interface Recipe {
+  id: number;
   title: string;
   instructions: string;
   image: string;
   ingredients: Ingredient[];
 }
 
+export type NewRecipe = Omit<Recipe, 'id'>;
+
 interface RecipesContextType {
   recipes: Recipe[];
-  addRecipe: (recipe: Recipe) => void;
+  loading: boolean;
+  addRecipe: (recipe: NewRecipe) => Promise<void>;
+  updateRecipeImage: (id: number, imageUri: string) => Promise<void>;
+  deleteRecipe: (id: number) => Promise<void>;
 }
 
 const RecipesContext = createContext<RecipesContextType | undefined>(undefined);
 
-const initialData: Recipe[] = [
-  {
-    title: "Lime Rice",
-    instructions: "Cook for 1000 seconds on high",
-    image: "rice.jpg",
-    ingredients: [{ amount: "1", unit: "tablespoon", name: "borax" }],
-  },
-  {
-    title: "Tacos",
-    instructions: "Cook for 10000 seconds on high",
-    image: "taco.jpg",
-    ingredients: [{ amount: "2", unit: "teaspoons", name: "borax" }],
-  },
-];
-
 export function RecipesProvider({ children }: { children: ReactNode }) {
-  const [recipes, setRecipes] = useState<Recipe[]>(initialData);
+  return (
+    <SQLiteProvider databaseName={RecipesDb.DATABASE_NAME} onInit={RecipesDb.migrateDbIfNeeded}>
+      <RecipesStore>{children}</RecipesStore>
+    </SQLiteProvider>
+  );
+}
 
-  const addRecipe = (recipe: Recipe) => {
-    setRecipes((prev) => [...prev, recipe]);
+function RecipesStore({ children }: { children: ReactNode }) {
+  const db = useSQLiteContext();
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    RecipesDb.getAllRecipes(db)
+      .then(setRecipes)
+      .catch((e) => console.warn('Failed to load recipes', e))
+      .finally(() => setLoading(false));
+  }, [db]);
+
+  const addRecipe = async (recipe: NewRecipe) => {
+    const saved = await RecipesDb.insertRecipe(db, recipe);
+    setRecipes((prev) => [...prev, saved]);
+  };
+
+  const updateRecipeImage = async (id: number, imageUri: string) => {
+    const image = await RecipesDb.updateRecipeImage(db, id, imageUri);
+    setRecipes((prev) => prev.map((r) => (r.id === id ? { ...r, image } : r)));
+  };
+
+  const deleteRecipe = async (id: number) => {
+    await RecipesDb.deleteRecipe(db, id);
+    setRecipes((prev) => prev.filter((r) => r.id !== id));
   };
 
   return (
-    <RecipesContext.Provider value={{ recipes, addRecipe }}>
+    <RecipesContext.Provider value={{ recipes, loading, addRecipe, updateRecipeImage, deleteRecipe }}>
       {children}
     </RecipesContext.Provider>
   );

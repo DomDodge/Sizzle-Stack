@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from 'react';
 import {
+  Alert,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -9,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native';
+import ImageInput from '../components/ImageInput';
 import IngredientsInput, { IngredientItem } from '../components/IngredientsInput';
 import InstructionsInput from '../components/InstructionsInput';
 import TitleInput from '../components/TitleInput';
@@ -23,24 +25,33 @@ export default function AddRecipeScreen() {
     { amount: '', unit: 'tsp', name: '' },
   ]);
   const [instructions, setInstructions] = useState('');
+  const [image, setImage] = useState('');
+  const [saving, setSaving] = useState(false);
 
   // Validation: Title present, at least one ingredient with a non-empty name, and instructions present
   const isFormValid =
     title.trim().length > 0 &&
     ingredients.some((item) => item.name.trim().length > 0) &&
-    instructions.trim().length > 0;
+    instructions.trim().length > 0 &&
+    !saving;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isFormValid) return;
 
-    addRecipe({
-      title: title.trim(),
-      ingredients: ingredients.filter((item) => item.name.trim() !== ''),
-      image: "rice.jpg",
-      instructions: instructions.trim(),
-    });
-
-    router.back();
+    setSaving(true);
+    try {
+      await addRecipe({
+        title: title.trim(),
+        ingredients: ingredients.filter((item) => item.name.trim() !== ''),
+        image,
+        instructions: instructions.trim(),
+      });
+      router.back();
+    } catch (e) {
+      console.warn('Failed to save recipe', e);
+      Alert.alert('Could not save recipe', 'Please try again.');
+      setSaving(false);
+    }
   };
 
   return (
@@ -48,6 +59,7 @@ export default function AddRecipeScreen() {
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <TitleInput title={title} onChangeTitle={setTitle} />
+          <ImageInput image={image} onChangeImage={setImage} />
           <IngredientsInput ingredients={ingredients} onChangeIngredients={setIngredients} />
           <InstructionsInput instructions={instructions} onChangeInstructions={setInstructions} />
         </ScrollView>
@@ -60,7 +72,7 @@ export default function AddRecipeScreen() {
             onPress={handleSubmit}
           >
             <Text style={[styles.submitText, isFormValid ? styles.submitTextActive : styles.submitTextDisabled]}>
-              Submit Recipe
+              {saving ? 'Saving...' : 'Submit Recipe'}
             </Text>
           </TouchableOpacity>
         </View>
