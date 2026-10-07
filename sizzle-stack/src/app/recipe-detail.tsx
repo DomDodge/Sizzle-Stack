@@ -1,14 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { pickRecipeImage } from '../components/ImageInput';
-import { useRecipes } from '../context/recipe_context';
+import { Colors } from '../constants/Colors';
+import { useGrocery, useRecipes } from '../context/recipe_context';
 
 export default function RecipeDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { recipes, updateRecipeImage } = useRecipes();
+  const { addItems } = useGrocery();
   const [uploading, setUploading] = useState(false);
+  const router = useRouter();
 
   const recipe = recipes.find((r) => r.id === Number(id));
 
@@ -18,6 +21,11 @@ export default function RecipeDetails() {
         <Text style={styles.notFound}>Recipe not found.</Text>
       </View>
     );
+  }
+
+  const addToList = () => {
+    addItems(recipe.ingredients);
+    router.back();
   }
 
   const handleChangeImage = async () => {
@@ -37,6 +45,7 @@ export default function RecipeDetails() {
 
   return (
       <View style={styles.container}>
+        <ScrollView style={styles.scrolling}>
           <Pressable onPress={handleChangeImage} disabled={uploading}>
             <ImageBackground
               source={recipe.image ? { uri: recipe.image } : undefined}
@@ -66,6 +75,19 @@ export default function RecipeDetails() {
               ))}
             </View>
           </View>
+        </ScrollView>
+        
+        <View style={styles.bottomBar}>
+          <Pressable 
+            style={({ pressed }) => [
+              styles.button,
+              pressed && styles.buttonPressed
+            ]}
+            onPress={addToList}
+          >
+            <Text style={styles.buttonText}>Add To Grocery List</Text>
+          </Pressable>
+        </View>
       </View>
   )
 }
@@ -75,6 +97,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     gap: 20,
+  },
+  scrolling: {
+    paddingBottom: 90,
   },
   notFound: {
     padding: 20,
@@ -110,6 +135,31 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: "bold",
     fontSize: 18,
+  },
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  button: {
+    backgroundColor: Colors.volsOrange,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonPressed: {
+    opacity: 0.8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   ingredients: {
     display: "flex",
