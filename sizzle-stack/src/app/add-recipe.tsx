@@ -1,107 +1,35 @@
 import { useRouter } from "expo-router";
-import { useState } from 'react';
-import {
-  Alert,
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View
-} from 'react-native';
-import ImageInput from '../components/ImageInput';
-import IngredientsInput, { IngredientItem } from '../components/IngredientsInput';
-import InstructionsInput from '../components/InstructionsInput';
-import TitleInput from '../components/TitleInput';
-import { useRecipes } from '../context/recipe_context';
-
+import { ScrollView, StyleSheet } from 'react-native';
+import RecipeForm from '../components/recipe-form/RecipeForm';
+import BottomBar from '../components/ui/BottomBar';
+import DismissKeyboardView from '../components/ui/DismissKeyboardView';
+import PrimaryButton from '../components/ui/PrimaryButton';
+import { useRecipeForm } from '../hooks/useRecipeForm';
 
 export default function AddRecipeScreen() {
-  const { addRecipe } = useRecipes();
-  const [title, setTitle] = useState('');
   const router = useRouter();
-  const [ingredients, setIngredients] = useState<IngredientItem[]>([
-    { amount: '', unit: 'tsp', name: '' },
-  ]);
-  const [instructions, setInstructions] = useState('');
-  const [image, setImage] = useState('');
-  const [saving, setSaving] = useState(false);
-
-  // Validation: Title present, at least one ingredient with a non-empty name, and instructions present
-  const isFormValid =
-    title.trim().length > 0 &&
-    ingredients.some((item) => item.name.trim().length > 0) &&
-    instructions.trim().length > 0 &&
-    !saving;
-
-  const handleSubmit = async () => {
-    if (!isFormValid) return;
-
-    setSaving(true);
-    try {
-      await addRecipe({
-        title: title.trim(),
-        ingredients: ingredients.filter((item) => item.name.trim() !== ''),
-        image,
-        instructions: instructions.trim(),
-      });
-      router.back();
-    } catch (e) {
-      console.warn('Failed to save recipe', e);
-      Alert.alert('Could not save recipe', 'Please try again.');
-      setSaving(false);
-    }
-  };
+  const form = useRecipeForm(() => router.back());
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-          <TitleInput title={title} onChangeTitle={setTitle} />
-          <ImageInput image={image} onChangeImage={setImage} />
-          <IngredientsInput ingredients={ingredients} onChangeIngredients={setIngredients} />
-          <InstructionsInput instructions={instructions} onChangeInstructions={setInstructions} />
-        </ScrollView>
+    <DismissKeyboardView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <RecipeForm form={form} />
+      </ScrollView>
 
-        {/* Submit Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={[styles.submitButton, isFormValid ? styles.submitActive : styles.submitDisabled]}
-            disabled={!isFormValid}
-            onPress={handleSubmit}
-          >
-            <Text style={[styles.submitText, isFormValid ? styles.submitTextActive : styles.submitTextDisabled]}>
-              {saving ? 'Saving...' : 'Submit Recipe'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
+      <BottomBar>
+        <PrimaryButton
+          label={form.saving ? 'Saving...' : 'Submit Recipe'}
+          onPress={form.submit}
+          disabled={!form.isFormValid}
+          style={styles.submitButton}
+        />
+      </BottomBar>
+    </DismissKeyboardView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   scrollContent: { padding: 16, paddingBottom: 100 },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 16,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-  },
-  submitButton: {
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  submitActive: { backgroundColor: '#007AFF' },
-  submitDisabled: { backgroundColor: '#E5E5EA' },
-  submitText: { fontSize: 16, fontWeight: '600' },
-  submitTextActive: { color: '#FFF' },
-  submitTextDisabled: { color: '#8E8E93' },
+  submitButton: { backgroundColor: '#007AFF' },
 });

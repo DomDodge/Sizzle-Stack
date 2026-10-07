@@ -2,6 +2,8 @@ import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import * as RecipesDb from '../db/recipes_db';
 
+// Keep this as one file. Do not split up the context
+
 export interface Ingredient {
   amount: string;
   unit: string;
