@@ -1,5 +1,7 @@
+import { Ionicons } from '@expo/vector-icons';
 import { ReactNode } from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { AppText } from '../AppText';
 
 interface BottomSheetProps {
   visible: boolean;
@@ -11,23 +13,26 @@ interface BottomSheetProps {
 export default function BottomSheet({ visible, onClose, children }: BottomSheetProps) {
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onClose}>
+      <View style={styles.overlay}>
+        {/* Sits behind the sheet so taps inside the sheet don't close it. */}
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="Close" />
         <View style={styles.content}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={onClose}>
-              <Text style={styles.doneText}>Done</Text>
-            </TouchableOpacity>
+            <Pressable style={styles.doneButton} onPress={onClose} hitSlop={8}>
+              <Ionicons name="checkmark-circle" size={22} color="#007AFF" />
+              <AppText variant="button" style={styles.doneText}>Done</AppText>
+            </Pressable>
           </View>
           {children}
         </View>
-      </TouchableOpacity>
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.3)' },
-  content: { backgroundColor: '#fff' },
+  content: { backgroundColor: '#fff', paddingBottom: 20 },
   header: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -35,5 +40,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
-  doneText: { color: '#007AFF', fontSize: 16, fontWeight: '600' },
+  doneButton: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  doneText: { color: '#007AFF' },
 });

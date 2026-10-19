@@ -1,11 +1,12 @@
 import { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { AppText } from '../AppText';
 
 // A labelled section of a form.
 export default function FormField({ label, children }: { label: string; children: ReactNode }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <AppText variant="itemTitle" style={styles.label}>{label}</AppText>
       {children}
     </View>
   );
@@ -13,5 +14,5 @@ export default function FormField({ label, children }: { label: string; children
 
 const styles = StyleSheet.create({
   container: { marginBottom: 20 },
-  label: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
+  label: { marginBottom: 8 },
 });

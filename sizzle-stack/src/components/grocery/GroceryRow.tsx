@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Colors } from '../../constants/Colors';
 import { GroceryItem } from '../../context/recipe_context';
 import { formatIngredient } from '../../utils/ingredients';
+import { AppText } from '../AppText';
 
 interface GroceryRowProps {
   item: GroceryItem;
@@ -19,7 +20,7 @@ export default function GroceryRow({ item, onToggle, onRemove }: GroceryRowProps
           size={24}
           color={item.checked ? Colors.freshGreen : Colors.textMuted}
         />
-        <Text style={[styles.text, item.checked && styles.checked]}>{formatIngredient(item)}</Text>
+        <AppText style={[styles.text, item.checked && styles.checked]}>{formatIngredient(item)}</AppText>
       </Pressable>
       <Pressable onPress={onRemove} hitSlop={8}>
         <Ionicons name="trash-outline" size={20} color={Colors.textMuted} />
@@ -40,6 +41,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   main: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  text: { flex: 1, fontSize: 16, color: Colors.text },
+  text: { flex: 1, color: Colors.text },
   checked: { color: Colors.textMuted, textDecorationLine: 'line-through' },
 });

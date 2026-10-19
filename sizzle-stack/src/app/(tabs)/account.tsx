@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { AppText } from '../../components/AppText';
 
 export default function Account() {
   return (
     <View style={styles.container}>
-      <Text>Dominic Dodge</Text>
+      <AppText>Dominic Dodge</AppText>
     </View>
   );
 }

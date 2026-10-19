@@ -1,8 +1,9 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { ImageBackground, Pressable, StyleSheet, Text } from 'react-native';
+import { ImageBackground, Pressable, StyleSheet } from 'react-native';
 import { Colors } from '../../constants/Colors';
 import { Recipe } from '../../context/recipe_context';
+import { AppText } from '../AppText';
 
 export default function RecipeCard({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
           end={{ x: 0, y: 1 }}
           style={styles.gradientOverlay}
         >
-          <Text style={styles.title}>{title}</Text>
+          <AppText variant="itemTitle" style={styles.title}>{title}</AppText>
         </LinearGradient>
       </ImageBackground>
     </Pressable>
@@ -55,8 +56,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start', // Pins text to left
   },
   title: {
-    fontWeight: '600',
-    fontSize: 16,
     color: '#FFFFFF', // White text contrast against image
   },
 });

@@ -1,5 +1,6 @@
-import { Pressable, StyleProp, StyleSheet, Text, TextStyle, ViewStyle } from 'react-native';
+import { Pressable, StyleProp, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { Colors } from '../../constants/Colors';
+import { AppText } from '../AppText';
 
 interface PrimaryButtonProps {
   label: string;
@@ -16,7 +17,7 @@ export default function PrimaryButton({ label, onPress, disabled, style, textSty
       onPress={onPress}
       disabled={disabled}
     >
-      <Text style={[styles.text, textStyle, disabled && styles.textDisabled]}>{label}</Text>
+      <AppText variant="button" style={[styles.text, textStyle, disabled && styles.textDisabled]}>{label}</AppText>
     </Pressable>
   );
 }
@@ -31,6 +32,6 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.8 },
   disabled: { backgroundColor: '#E5E5EA' },
-  text: { color: '#FFF', fontSize: 16, fontWeight: '600' },
+  text: { color: '#FFF' },
   textDisabled: { color: '#8E8E93' },
 });

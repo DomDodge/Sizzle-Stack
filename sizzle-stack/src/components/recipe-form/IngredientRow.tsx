@@ -1,7 +1,8 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { fieldBorder } from '../../constants/Styles';
 import { Ingredient } from '../../context/recipe_context';
 import UnitPicker from './UnitPicker';
+import { AppText } from '../AppText';
 
 interface IngredientRowProps {
   ingredient: Ingredient;
@@ -33,7 +34,7 @@ export default function IngredientRow({ ingredient, onChange, onRemove }: Ingred
       />
       {onRemove && (
         <TouchableOpacity style={styles.removeButton} onPress={onRemove}>
-          <Text style={styles.removeText}>✕</Text>
+          <AppText variant="button" style={styles.removeText}>✕</AppText>
         </TouchableOpacity>
       )}
     </View>

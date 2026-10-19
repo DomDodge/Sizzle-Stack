@@ -1,8 +1,9 @@
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Ingredient } from '../../context/recipe_context';
 import { emptyIngredient } from '../../utils/ingredients';
 import FormField from '../ui/FormField';
 import IngredientRow from './IngredientRow';
+import { AppText } from '../AppText';
 
 interface IngredientsInputProps {
   ingredients: Ingredient[];
@@ -30,7 +31,7 @@ export default function IngredientsInput({ ingredients, onChangeIngredients }: I
       ))}
 
       <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
-        <Text style={styles.addText}>+ Add Ingredient</Text>
+        <AppText variant="button" style={styles.addText}>+ Add Ingredient</AppText>
       </TouchableOpacity>
     </FormField>
   );
@@ -38,5 +39,5 @@ export default function IngredientsInput({ ingredients, onChangeIngredients }: I
 
 const styles = StyleSheet.create({
   addButton: { marginTop: 4, alignSelf: 'flex-start' },
-  addText: { color: '#007AFF', fontSize: 16, fontWeight: '500' },
+  addText: { color: '#007AFF' },
 });

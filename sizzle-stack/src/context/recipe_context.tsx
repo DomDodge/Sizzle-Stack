@@ -1,6 +1,7 @@
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import * as RecipesDb from '../db/recipes_db';
+import { addAmounts, isSameIngredient } from '../utils/ingredients';
 
 // Keep this as one file. Do not split up the context
 
@@ -55,15 +56,21 @@ export function RecipesProvider({ children }: { children: ReactNode }) {
 export function GroceryProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<GroceryItem[]>([]);
 
+  // Ingredients already on the list have their amounts added together
+  // instead of getting a second entry.
   const addItems = (ingredients: Ingredient[]) => {
-    setItems((prev) => [
-      ...prev,
-      ...ingredients.map((ing) => ({
-        ...ing,
-        id: `${Date.now()}-${Math.random()}`,
-        checked: false,
-      })),
-    ]);
+    setItems((prev) =>
+      ingredients.reduce((list, ing) => {
+        const existing = list.find((item) => isSameIngredient(item, ing));
+        if (existing) {
+          // Unchecked again, since more of it is now needed.
+          return list.map((item) =>
+            item === existing ? { ...item, amount: addAmounts(item.amount, ing.amount), checked: false } : item
+          );
+        }
+        return [...list, { ...ing, id: `${Date.now()}-${Math.random()}`, checked: false }];
+      }, prev)
+    );
   };
 
   const toggleItem = (id: string) =>

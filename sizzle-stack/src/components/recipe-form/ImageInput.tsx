@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet } from 'react-native';
+import { Image, Keyboard, Pressable, StyleSheet } from 'react-native';
 import { fieldBorder } from '../../constants/Styles';
 import { pickRecipeImage } from '../../utils/pickRecipeImage';
 import EmptyState from '../ui/EmptyState';
@@ -12,6 +12,7 @@ interface ImageInputProps {
 
 export default function ImageInput({ image, onChangeImage }: ImageInputProps) {
   const handlePress = async () => {
+    Keyboard.dismiss();
     const uri = await pickRecipeImage();
     if (uri) onChangeImage(uri);
   };

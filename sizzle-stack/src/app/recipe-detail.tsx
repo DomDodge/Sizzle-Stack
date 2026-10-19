@@ -1,11 +1,12 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import IngredientList from '../components/recipes/IngredientList';
 import RecipeHeroImage from '../components/recipes/RecipeHeroImage';
 import BottomBar from '../components/ui/BottomBar';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import { useGrocery, useRecipes } from '../context/recipe_context';
 import { useRecipeImageUpload } from '../hooks/useRecipeImageUpload';
+import { AppText } from '../components/AppText';
 
 export default function RecipeDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,7 +20,7 @@ export default function RecipeDetails() {
   if (!recipe) {
     return (
       <View style={styles.container}>
-        <Text style={styles.notFound}>Recipe not found.</Text>
+        <AppText style={styles.notFound}>Recipe not found.</AppText>
       </View>
     );
   }
@@ -34,8 +35,8 @@ export default function RecipeDetails() {
       <ScrollView style={styles.scrolling}>
         <RecipeHeroImage image={recipe.image} uploading={uploading} onPress={changeImage} />
         <View style={styles.content}>
-          <Text style={styles.title}>{recipe.title}</Text>
-          <Text>{recipe.instructions}</Text>
+          <AppText variant="sectionTitle" style={styles.title}>{recipe.title}</AppText>
+          <AppText>{recipe.instructions}</AppText>
           <IngredientList ingredients={recipe.ingredients} />
         </View>
       </ScrollView>
@@ -50,7 +51,7 @@ export default function RecipeDetails() {
 const styles = StyleSheet.create({
   container: { flex: 1, gap: 20 },
   scrolling: { paddingBottom: 90 },
-  notFound: { padding: 20, fontSize: 16 },
+  notFound: { padding: 20 },
   content: { paddingHorizontal: 20 },
-  title: { fontWeight: "bold", fontSize: 18 },
+  title: { marginBottom: 8 },
 });

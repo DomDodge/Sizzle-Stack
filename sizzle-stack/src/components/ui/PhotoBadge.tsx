@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { ComponentProps } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { AppText } from '../AppText';
 
 interface PhotoBadgeProps {
   label: string;
@@ -12,7 +13,7 @@ export default function PhotoBadge({ label, icon }: PhotoBadgeProps) {
   return (
     <View style={styles.badge}>
       {icon && <Ionicons name={icon} size={16} color="#FFF" />}
-      <Text style={styles.text}>{label}</Text>
+      <AppText variant="secondary" style={styles.text}>{label}</AppText>
     </View>
   );
 }
