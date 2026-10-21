@@ -1,4 +1,5 @@
 import { ActivityIndicator, ImageBackground, Pressable, StyleSheet } from 'react-native';
+import { useColors } from '../../context/recipe_context';
 import PhotoBadge from '../ui/PhotoBadge';
 
 interface RecipeHeroImageProps {
@@ -9,9 +10,10 @@ interface RecipeHeroImageProps {
 
 // Full-width header photo; tap it to add or change the picture.
 export default function RecipeHeroImage({ image, uploading, onPress }: RecipeHeroImageProps) {
+  const c = useColors();
   return (
     <Pressable onPress={onPress} disabled={uploading}>
-      <ImageBackground source={image ? { uri: image } : undefined} style={styles.image}>
+      <ImageBackground source={image ? { uri: image } : undefined} style={[styles.image, { backgroundColor: c.border }]}>
         {uploading ? (
           <ActivityIndicator color="#FFF" />
         ) : (
@@ -26,7 +28,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 200,
-    backgroundColor: '#DDD',
     alignItems: 'center',
     justifyContent: 'center',
   },

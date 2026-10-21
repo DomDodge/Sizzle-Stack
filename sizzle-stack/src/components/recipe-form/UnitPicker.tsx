@@ -2,6 +2,7 @@ import { Picker } from '@react-native-picker/picker';
 import { useState } from 'react';
 import { Keyboard, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { fieldBorder } from '../../constants/Styles';
+import { useColors } from '../../context/recipe_context';
 import BottomSheet from '../ui/BottomSheet';
 import { AppText } from '../AppText';
 
@@ -14,6 +15,7 @@ interface UnitPickerProps {
 
 export default function UnitPicker({ value, onChange }: UnitPickerProps) {
   const [open, setOpen] = useState(false);
+  const c = useColors();
 
   const openSheet = () => {
     Keyboard.dismiss();
@@ -21,7 +23,7 @@ export default function UnitPicker({ value, onChange }: UnitPickerProps) {
   };
 
   const picker = (
-    <Picker selectedValue={value} onValueChange={onChange} style={Platform.OS === 'ios' ? undefined : styles.picker} mode="dropdown" onFocus={Keyboard.dismiss}>
+    <Picker selectedValue={value} onValueChange={onChange} style={Platform.OS === 'ios' ? undefined : [styles.picker, { color: c.text }]} dropdownIconColor={c.text} mode="dropdown" onFocus={Keyboard.dismiss}>
       {UNITS.map((unit) => (
         <Picker.Item key={unit} label={unit} value={unit} />
       ))}

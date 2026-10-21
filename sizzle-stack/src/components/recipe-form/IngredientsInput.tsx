@@ -1,4 +1,5 @@
 import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Colors } from '../../constants/Colors';
 import { Ingredient } from '../../context/recipe_context';
 import { emptyIngredient } from '../../utils/ingredients';
 import FormField from '../ui/FormField';
@@ -39,5 +40,5 @@ export default function IngredientsInput({ ingredients, onChangeIngredients }: I
 
 const styles = StyleSheet.create({
   addButton: { marginTop: 4, alignSelf: 'flex-start' },
-  addText: { color: '#007AFF' },
+  addText: { color: Colors.link },
 });

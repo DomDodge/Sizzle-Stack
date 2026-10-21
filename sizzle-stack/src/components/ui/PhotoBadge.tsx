@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { ComponentProps } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Fonts } from '../../constants/Typography';
 import { AppText } from '../AppText';
 
 interface PhotoBadgeProps {
@@ -31,5 +32,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
-  text: { color: '#FFF', fontWeight: '600' },
+  text: { color: '#FFF', fontFamily: Fonts.semibold },
 });

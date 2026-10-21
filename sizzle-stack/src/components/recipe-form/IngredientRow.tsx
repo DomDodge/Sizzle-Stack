@@ -1,6 +1,8 @@
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Colors } from '../../constants/Colors';
 import { fieldBorder } from '../../constants/Styles';
-import { Ingredient } from '../../context/recipe_context';
+import { Fonts } from '../../constants/Typography';
+import { Ingredient, useColors } from '../../context/recipe_context';
 import UnitPicker from './UnitPicker';
 import { AppText } from '../AppText';
 
@@ -12,12 +14,14 @@ interface IngredientRowProps {
 }
 
 export default function IngredientRow({ ingredient, onChange, onRemove }: IngredientRowProps) {
+  const c = useColors();
   const update = (field: keyof Ingredient) => (value: string) => onChange({ ...ingredient, [field]: value });
 
   return (
     <View style={styles.row}>
       <TextInput
-        style={[styles.input, styles.amount]}
+        style={[styles.input, styles.amount, { color: c.text }]}
+        placeholderTextColor={c.textMuted}
         placeholder="Qty"
         keyboardType="decimal-pad"
         value={ingredient.amount}
@@ -26,7 +30,8 @@ export default function IngredientRow({ ingredient, onChange, onRemove }: Ingred
       />
       <UnitPicker value={ingredient.unit} onChange={update('unit')} />
       <TextInput
-        style={[styles.input, styles.name]}
+        style={[styles.input, styles.name, { color: c.text }]}
+        placeholderTextColor={c.textMuted}
         placeholder="Ingredient name"
         value={ingredient.name}
         onChangeText={update('name')}
@@ -47,5 +52,5 @@ const styles = StyleSheet.create({
   amount: { width: 60 },
   name: { flex: 1 },
   removeButton: { paddingHorizontal: 6 },
-  removeText: { color: '#FF3B30', fontSize: 18, fontWeight: 'bold' },
+  removeText: { color: Colors.danger, fontSize: 18, fontFamily: Fonts.bold },
 });

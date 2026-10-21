@@ -1,5 +1,8 @@
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
+import Storage from 'expo-sqlite/kv-store';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { Appearance, useColorScheme } from 'react-native';
+import { Palettes } from '../constants/Colors';
 import * as RecipesDb from '../db/recipes_db';
 import { addAmounts, isSameIngredient } from '../utils/ingredients';
 
@@ -85,6 +88,30 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
       {children}
     </GroceryContext.Provider>
   );
+}
+
+// The light/dark choice overrides the phone's setting app-wide (keyboard and pickers included)
+// and is saved so it survives restarts.
+const SCHEME_KEY = 'colorScheme';
+
+// Re-applies the saved light/dark choice on launch.
+export function restoreColorScheme() {
+  const saved = Storage.getItemSync(SCHEME_KEY);
+  if (saved === 'light' || saved === 'dark') Appearance.setColorScheme(saved);
+}
+
+export function useColors() {
+  return Palettes[useColorScheme() === 'dark' ? 'dark' : 'light'];
+}
+
+export function useDarkMode() {
+  const dark = useColorScheme() === 'dark';
+  const setDark = (on: boolean) => {
+    const scheme = on ? 'dark' : 'light';
+    Appearance.setColorScheme(scheme);
+    Storage.setItemSync(SCHEME_KEY, scheme);
+  };
+  return [dark, setDark] as const;
 }
 
 function RecipesStore({ children }: { children: ReactNode }) {

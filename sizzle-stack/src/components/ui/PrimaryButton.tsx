@@ -1,5 +1,6 @@
 import { Pressable, StyleProp, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { Colors } from '../../constants/Colors';
+import { useColors } from '../../context/recipe_context';
 import { AppText } from '../AppText';
 
 interface PrimaryButtonProps {
@@ -11,9 +12,10 @@ interface PrimaryButtonProps {
 }
 
 export default function PrimaryButton({ label, onPress, disabled, style, textStyle }: PrimaryButtonProps) {
+  const c = useColors();
   return (
     <Pressable
-      style={({ pressed }) => [styles.button, style, pressed && styles.pressed, disabled && styles.disabled]}
+      style={({ pressed }) => [styles.button, style, pressed && styles.pressed, disabled && { backgroundColor: c.disabled }]}
       onPress={onPress}
       disabled={disabled}
     >
@@ -31,7 +33,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   pressed: { opacity: 0.8 },
-  disabled: { backgroundColor: '#E5E5EA' },
   text: { color: '#FFF' },
   textDisabled: { color: '#8E8E93' },
 });

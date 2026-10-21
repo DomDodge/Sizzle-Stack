@@ -5,6 +5,7 @@ import RecipeForm from '../components/recipe-form/RecipeForm';
 import BottomBar from '../components/ui/BottomBar';
 import DismissKeyboardView from '../components/ui/DismissKeyboardView';
 import PrimaryButton from '../components/ui/PrimaryButton';
+import { Colors } from '../constants/Colors';
 import { useKeyboardVisible } from '../hooks/useKeyboardVisible';
 import { useRecipeForm } from '../hooks/useRecipeForm';
 import { AppText } from '../components/AppText';
@@ -23,7 +24,7 @@ export default function AddRecipeScreen() {
           headerRight: () =>
             keyboardVisible ? (
               <Pressable style={styles.doneButton} onPress={Keyboard.dismiss} hitSlop={8}>
-                <Ionicons name="checkmark-circle" size={22} color="#007AFF" />
+                <Ionicons name="checkmark-circle" size={22} color={Colors.link} />
                 <AppText variant="button" style={styles.doneText}>Done</AppText>
               </Pressable>
             ) : null,
@@ -55,9 +56,9 @@ export default function AddRecipeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1 },
   scrollContent: { padding: 16, paddingBottom: 100 },
-  submitButton: { backgroundColor: '#007AFF' },
+  submitButton: { backgroundColor: Colors.link },
   doneButton: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  doneText: { color: '#007AFF' },
+  doneText: { color: Colors.link },
 });

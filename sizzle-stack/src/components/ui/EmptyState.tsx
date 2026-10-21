@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { ComponentProps } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { Colors } from '../../constants/Colors';
+import { useColors } from '../../context/recipe_context';
 import { AppText } from '../AppText';
 
 interface EmptyStateProps {
@@ -12,15 +12,15 @@ interface EmptyStateProps {
 }
 
 export default function EmptyState({ icon, message, iconSize = 40, style }: EmptyStateProps) {
+  const { textMuted } = useColors();
   return (
     <View style={[styles.container, style]}>
-      <Ionicons name={icon} size={iconSize} color={Colors.textMuted} />
-      <AppText style={styles.text}>{message}</AppText>
+      <Ionicons name={icon} size={iconSize} color={textMuted} />
+      <AppText style={{ color: textMuted }}>{message}</AppText>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { alignItems: 'center', justifyContent: 'center', gap: 10 },
-  text: { color: Colors.textMuted },
 });

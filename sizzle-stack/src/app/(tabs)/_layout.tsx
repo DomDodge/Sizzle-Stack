@@ -1,15 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { Colors } from '../../constants/Colors';
+import { Fonts } from '../../constants/Typography';
+import { useColors } from '../../context/recipe_context';
 
 export default function TabLayout() {
+  const c = useColors();
   return (
     <Tabs
       screenOptions={{
         headerStyle: { backgroundColor: Colors.volsOrange },
         headerTintColor: '#FFFFFF',
+        headerTitleStyle: { fontFamily: Fonts.craftyBold },
         tabBarActiveTintColor: Colors.volsOrange,
         tabBarInactiveTintColor: '#888888',
+        tabBarStyle: { backgroundColor: c.surface, borderTopColor: c.border },
+        sceneStyle: { backgroundColor: c.background },
       }}
     >
       <Tabs.Screen

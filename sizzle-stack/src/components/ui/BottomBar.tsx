@@ -1,10 +1,11 @@
 import { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Colors } from '../../constants/Colors';
+import { useColors } from '../../context/recipe_context';
 
 // Pinned to the bottom of the screen, above scrolling content.
 export default function BottomBar({ children }: { children: ReactNode }) {
-  return <View style={styles.bar}>{children}</View>;
+  const c = useColors();
+  return <View style={[styles.bar, { backgroundColor: c.surface, borderTopColor: c.border }]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
@@ -13,10 +14,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFF',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
   },
 });
