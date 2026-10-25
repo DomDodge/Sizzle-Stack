@@ -75,6 +75,25 @@ export async function updateRecipeImage(db: SQLiteDatabase, id: number, imageUri
   return resolveImageUri(image);
 }
 
+// Saves edits to every field of a recipe. The photo is only re-copied when it changed.
+export async function updateRecipe(db: SQLiteDatabase, id: number, recipe: NewRecipe): Promise<Recipe> {
+  const existing = await db.getFirstAsync<{ image: string }>('SELECT image FROM recipes WHERE id = ?', id);
+  const oldImage = existing?.image ?? '';
+  // The form passes back the displayed uri when the photo wasn't changed.
+  const imageChanged = recipe.image !== resolveImageUri(oldImage);
+  const image = imageChanged ? await persistImage(recipe.image) : oldImage;
+  await db.runAsync(
+    'UPDATE recipes SET title = ?, instructions = ?, image = ?, ingredients = ? WHERE id = ?',
+    recipe.title,
+    recipe.instructions,
+    image,
+    JSON.stringify(recipe.ingredients),
+    id
+  );
+  if (imageChanged && oldImage) deleteImage(oldImage);
+  return { ...recipe, id, image: resolveImageUri(image) };
+}
+
 export async function deleteRecipe(db: SQLiteDatabase, id: number) {
   const existing = await db.getFirstAsync<{ image: string }>('SELECT image FROM recipes WHERE id = ?', id);
   await db.runAsync('DELETE FROM recipes WHERE id = ?', id);

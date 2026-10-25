@@ -1,6 +1,6 @@
-import { ActivityIndicator, ImageBackground, Pressable, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ImageBackground, Pressable, StyleSheet } from 'react-native';
 import { useColors } from '../../context/recipe_context';
-import PhotoBadge from '../ui/PhotoBadge';
 
 interface RecipeHeroImageProps {
   image: string;
@@ -14,11 +14,18 @@ export default function RecipeHeroImage({ image, uploading, onPress }: RecipeHer
   return (
     <Pressable onPress={onPress} disabled={uploading}>
       <ImageBackground source={image ? { uri: image } : undefined} style={[styles.image, { backgroundColor: c.border }]}>
-        {uploading ? (
-          <ActivityIndicator color="#FFF" />
-        ) : (
-          <PhotoBadge icon="camera" label={image ? 'Change Photo' : 'Add Photo'} />
-        )}
+        <LinearGradient
+                  colors={[c.opaque, c.background]}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.gradientOverlay}
+                >
+          {/* {uploading ? (
+            <ActivityIndicator color="#FFF" />
+          ) : (
+            <PhotoBadge icon="camera" label={image ? 'Change Photo' : 'Add Photo'} />
+          )} */}
+        </LinearGradient>
       </ImageBackground>
     </Pressable>
   );
@@ -27,8 +34,18 @@ export default function RecipeHeroImage({ image, uploading, onPress }: RecipeHer
 const styles = StyleSheet.create({
   image: {
     width: '100%',
-    height: 200,
+    height: 300,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  gradientOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '60%',
+    padding: 10,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start', // Pins text to left
   },
 });

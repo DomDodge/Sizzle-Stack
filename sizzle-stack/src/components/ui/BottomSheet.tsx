@@ -1,9 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import { ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
-import { Colors } from '../../constants/Colors';
 import { useColors } from '../../context/recipe_context';
-import { AppText } from '../AppText';
+import HeaderButton from './HeaderButton';
 
 interface BottomSheetProps {
   visible: boolean;
@@ -21,10 +19,7 @@ export default function BottomSheet({ visible, onClose, children }: BottomSheetP
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="Close" />
         <View style={[styles.content, { backgroundColor: c.surface }]}>
           <View style={[styles.header, { borderBottomColor: c.border }]}>
-            <Pressable style={styles.doneButton} onPress={onClose} hitSlop={8}>
-              <Ionicons name="checkmark-circle" size={22} color={Colors.link} />
-              <AppText variant="button" style={styles.doneText}>Done</AppText>
-            </Pressable>
+            <HeaderButton icon="checkmark-circle" label="Done" onPress={onClose} />
           </View>
           {children}
         </View>
@@ -39,9 +34,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    padding: 10,
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
   },
-  doneButton: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  doneText: { color: Colors.link },
 });

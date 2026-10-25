@@ -17,6 +17,7 @@ export const Palettes = {
     textMuted: '#666666',     // Subtitles / Placeholders
     border: '#E0E0E0',        // Dividers & Card Outlines
     disabled: '#E5E5EA',      // Disabled buttons
+    opaque: '#fafafa0b'
   },
   dark: {
     background: '#121212',
@@ -25,5 +26,6 @@ export const Palettes = {
     textMuted: '#A0A0A0',
     border: '#3A3A3C',
     disabled: '#3A3A3C',
+    opaque: '#12121202'
   },
 };

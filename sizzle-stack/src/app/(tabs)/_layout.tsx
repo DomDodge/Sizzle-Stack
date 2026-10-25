@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { Colors } from '../../constants/Colors';
-import { Fonts } from '../../constants/Typography';
+import { headerTitleStyle } from '../../constants/Typography';
 import { useColors } from '../../context/recipe_context';
 
 export default function TabLayout() {
@@ -11,7 +11,7 @@ export default function TabLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: Colors.volsOrange },
         headerTintColor: '#FFFFFF',
-        headerTitleStyle: { fontFamily: Fonts.craftyBold },
+        headerTitleStyle,
         tabBarActiveTintColor: Colors.volsOrange,
         tabBarInactiveTintColor: '#888888',
         tabBarStyle: { backgroundColor: c.surface, borderTopColor: c.border },

@@ -5,18 +5,19 @@ export type TextRole =
     | 'body' | 'secondary' | 'caption' | 'button';
 
 
+// Bebas Neue is all caps and narrow, with empty room above and below the letters,
+// so it's set larger with a line height close to its size to look balanced next to Roboto.
 export const Fonts = {
-    crafty:      'BalsamiqSans-Regular',
-    craftyBold:  'BalsamiqSans-Bold',
-    regular:   'Inter-Regular',
-    medium:    'Inter-Medium',
-    semibold:  'Inter-SemiBold',
-    bold:      'Inter-Bold',
+    display:   'BebasNeue-Regular', // Bebas Neue only ships one weight
+    regular:   'Roboto-Regular',
+    medium:    'Roboto-Medium',
+    semibold:  'Roboto-SemiBold',
+    bold:      'Roboto-Bold',
 };
 
 const ios: Record<TextRole, TextStyle> = {
-    screenTitle:     { fontSize: 34, fontFamily: Fonts.craftyBold, lineHeight: 41 },
-    sectionTitle:    { fontSize: 22, fontFamily: Fonts.craftyBold, lineHeight: 28 },
+    screenTitle:     { fontSize: 42, fontFamily: Fonts.display, lineHeight: 44 },
+    sectionTitle:    { fontSize: 30, fontFamily: Fonts.display, lineHeight: 32 },
     itemTitle:       { fontSize: 17, fontFamily: Fonts.semibold, lineHeight: 22 },
     body:            { fontSize: 17, fontFamily: Fonts.regular, lineHeight: 22 },
     secondary:       { fontSize: 15, fontFamily: Fonts.regular, lineHeight: 20 },
@@ -25,8 +26,8 @@ const ios: Record<TextRole, TextStyle> = {
 };
 
 const android: Record<TextRole, TextStyle> = {
-    screenTitle:     { fontSize: 32, fontFamily: Fonts.craftyBold, lineHeight: 40 },
-    sectionTitle:    { fontSize: 22, fontFamily: Fonts.craftyBold, lineHeight: 28 },
+    screenTitle:     { fontSize: 40, fontFamily: Fonts.display, lineHeight: 42, includeFontPadding: false },
+    sectionTitle:    { fontSize: 30, fontFamily: Fonts.display, lineHeight: 32, includeFontPadding: false },
     itemTitle:       { fontSize: 16, fontFamily: Fonts.semibold, lineHeight: 24, letterSpacing: 0.15 },
     body:            { fontSize: 16, fontFamily: Fonts.regular, lineHeight: 24, letterSpacing: 0.5 },
     secondary:       { fontSize: 14, fontFamily: Fonts.regular, lineHeight: 20, letterSpacing: 0.25 },
@@ -36,3 +37,6 @@ const android: Record<TextRole, TextStyle> = {
 
 
 export const Typography = Platform.select({ ios, default: android});
+
+// Title style for navigation headers.
+export const headerTitleStyle = { fontFamily: Fonts.display, fontSize: 26 };

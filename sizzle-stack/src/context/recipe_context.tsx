@@ -41,6 +41,7 @@ interface RecipesContextType {
   recipes: Recipe[];
   loading: boolean;
   addRecipe: (recipe: NewRecipe) => Promise<void>;
+  updateRecipe: (id: number, recipe: NewRecipe) => Promise<void>;
   updateRecipeImage: (id: number, imageUri: string) => Promise<void>;
   deleteRecipe: (id: number) => Promise<void>;
 }
@@ -131,6 +132,11 @@ function RecipesStore({ children }: { children: ReactNode }) {
     setRecipes((prev) => [...prev, saved]);
   };
 
+  const updateRecipe = async (id: number, recipe: NewRecipe) => {
+    const saved = await RecipesDb.updateRecipe(db, id, recipe);
+    setRecipes((prev) => prev.map((r) => (r.id === id ? saved : r)));
+  };
+
   const updateRecipeImage = async (id: number, imageUri: string) => {
     const image = await RecipesDb.updateRecipeImage(db, id, imageUri);
     setRecipes((prev) => prev.map((r) => (r.id === id ? { ...r, image } : r)));
@@ -142,7 +148,7 @@ function RecipesStore({ children }: { children: ReactNode }) {
   };
 
   return (
-    <RecipesContext.Provider value={{ recipes, loading, addRecipe, updateRecipeImage, deleteRecipe }}>
+    <RecipesContext.Provider value={{ recipes, loading, addRecipe, updateRecipe, updateRecipeImage, deleteRecipe }}>
       {children}
     </RecipesContext.Provider>
   );

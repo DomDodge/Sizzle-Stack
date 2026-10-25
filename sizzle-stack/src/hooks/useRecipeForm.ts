@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
-import { Ingredient, useRecipes } from '../context/recipe_context';
+import { Ingredient, Recipe, useRecipes } from '../context/recipe_context';
 import { emptyIngredient } from '../utils/ingredients';
 
-// Holds the add-recipe form state and saves it to the database.
-export function useRecipeForm(onSaved: () => void) {
-  const { addRecipe } = useRecipes();
-  const [title, setTitle] = useState('');
-  const [image, setImage] = useState('');
-  const [ingredients, setIngredients] = useState<Ingredient[]>([emptyIngredient()]);
-  const [instructions, setInstructions] = useState('');
+// Holds the recipe form state and saves it to the database.
+// Pass an existing recipe to edit it instead of creating a new one.
+export function useRecipeForm(onSaved: () => void, existing?: Recipe) {
+  const { addRecipe, updateRecipe } = useRecipes();
+  const [title, setTitle] = useState(existing?.title ?? '');
+  const [image, setImage] = useState(existing?.image ?? '');
+  const [ingredients, setIngredients] = useState<Ingredient[]>(
+    existing?.ingredients.length ? existing.ingredients : [emptyIngredient()]
+  );
+  const [instructions, setInstructions] = useState(existing?.instructions ?? '');
   const [saving, setSaving] = useState(false);
 
   // Validation: Title present, at least one ingredient with a non-empty name, and instructions present
@@ -24,12 +27,13 @@ export function useRecipeForm(onSaved: () => void) {
 
     setSaving(true);
     try {
-      await addRecipe({
+      const recipe = {
         title: title.trim(),
         ingredients: ingredients.filter((item) => item.name.trim() !== ''),
         image,
         instructions: instructions.trim(),
-      });
+      };
+      await (existing ? updateRecipe(existing.id, recipe) : addRecipe(recipe));
       onSaved();
     } catch (e) {
       console.warn('Failed to save recipe', e);
