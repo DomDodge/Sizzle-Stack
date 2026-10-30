@@ -20,6 +20,8 @@ export interface Recipe {
   instructions: string;
   image: string;
   ingredients: Ingredient[];
+  readyInMinutes: number | null;
+  servings: number | null;
 }
 
 export interface GroceryItem extends Ingredient {
@@ -60,14 +62,11 @@ export function RecipesProvider({ children }: { children: ReactNode }) {
 export function GroceryProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<GroceryItem[]>([]);
 
-  // Ingredients already on the list have their amounts added together
-  // instead of getting a second entry.
   const addItems = (ingredients: Ingredient[]) => {
     setItems((prev) =>
       ingredients.reduce((list, ing) => {
         const existing = list.find((item) => isSameIngredient(item, ing));
         if (existing) {
-          // Unchecked again, since more of it is now needed.
           return list.map((item) =>
             item === existing ? { ...item, amount: addAmounts(item.amount, ing.amount), checked: false } : item
           );
@@ -91,11 +90,8 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// The light/dark choice overrides the phone's setting app-wide (keyboard and pickers included)
-// and is saved so it survives restarts.
 const SCHEME_KEY = 'colorScheme';
 
-// Re-applies the saved light/dark choice on launch.
 export function restoreColorScheme() {
   const saved = Storage.getItemSync(SCHEME_KEY);
   if (saved === 'light' || saved === 'dark') Appearance.setColorScheme(saved);

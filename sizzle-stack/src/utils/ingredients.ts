@@ -1,6 +1,15 @@
 import { Ingredient } from '../context/recipe_context';
 
-export const emptyIngredient = (): Ingredient => ({ amount: '', unit: 'tsp', name: '' });
+export const UNITS = ['tsp', 'tbsp', 'cup', 'oz', 'lb', 'g', 'ml', 'clove', 'pinch', 'piece'];
+
+// Matches outside spellings like "Tbsps" or "cups" to a unit above. Unknown units are kept as-is.
+export const normalizeUnit = (unit: string) => {
+  const lower = unit.trim().toLowerCase();
+  const singular = lower.replace(/s$/, '');
+  return UNITS.find((u) => u === lower || u === singular) ?? lower;
+};
+
+export const emptyIngredient =(): Ingredient => ({ amount: '', unit: 'tsp', name: '' });
 
 // "2 cup flour" — skips any blank parts.
 export const formatIngredient = ({ amount, unit, name }: Ingredient) =>

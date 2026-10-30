@@ -23,7 +23,7 @@ export default function TabLayout() {
         options={{
           title: 'Recipes',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'restaurant' : 'restaurant-outline'} size={24} color={color} />
+            <Ionicons name={focused ? 'restaurant' : 'restaurant-outline'} size={24} color={color as string} />
           ),
         }}
       />
@@ -32,7 +32,16 @@ export default function TabLayout() {
         options={{
           title: 'Grocery List',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'cart' : 'cart-outline'} size={24} color={color} />
+            <Ionicons name={focused ? 'cart' : 'cart-outline'} size={24} color={color as string} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="discover"
+        options={{
+          title: 'Discover',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'search' : 'search-outline'} size={24} color={color as string} />
           ),
         }}
       />
@@ -41,7 +50,7 @@ export default function TabLayout() {
         options={{
           title: 'My Account',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
+            <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color as string} />
           ),
         }}
       />

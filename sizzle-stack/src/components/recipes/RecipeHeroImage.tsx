@@ -5,14 +5,14 @@ import { useColors } from '../../context/recipe_context';
 interface RecipeHeroImageProps {
   image: string;
   uploading: boolean;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
-// Full-width header photo; tap it to add or change the picture.
+// Full-width header photo; tap it to add or change the picture. Without onPress it is display-only.
 export default function RecipeHeroImage({ image, uploading, onPress }: RecipeHeroImageProps) {
   const c = useColors();
   return (
-    <Pressable onPress={onPress} disabled={uploading}>
+    <Pressable onPress={onPress} disabled={uploading || !onPress}>
       <ImageBackground source={image ? { uri: image } : undefined} style={[styles.image, { backgroundColor: c.border }]}>
         <LinearGradient
                   colors={[c.opaque, c.background]}

@@ -5,7 +5,7 @@ import type { Ingredient, NewRecipe, Recipe } from '../context/recipe_context';
 
 export const DATABASE_NAME = 'sizzle-stack.db';
 
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 
 // Picked photos live in the image picker's cache, which the OS can clear,
 // so they are copied into the app's document directory before being saved.
@@ -17,6 +17,8 @@ interface RecipeRow {
   instructions: string;
   image: string;
   ingredients: string;
+  ready_in_minutes: number | null;
+  servings: number | null;
 }
 
 // Runs once when the database opens. Bump DATABASE_VERSION and add a step
@@ -42,12 +44,20 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
     currentVersion = 1;
   }
 
+  if (currentVersion === 1) {
+    await db.execAsync(`
+      ALTER TABLE recipes ADD COLUMN ready_in_minutes INTEGER;
+      ALTER TABLE recipes ADD COLUMN servings INTEGER;
+    `);
+    currentVersion = 2;
+  }
+
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
 
 export async function getAllRecipes(db: SQLiteDatabase): Promise<Recipe[]> {
   const rows = await db.getAllAsync<RecipeRow>(
-    'SELECT id, title, instructions, image, ingredients FROM recipes ORDER BY created_at ASC'
+    'SELECT id, title, instructions, image, ingredients, ready_in_minutes, servings FROM recipes ORDER BY created_at ASC'
   );
   return rows.map(rowToRecipe);
 }
@@ -55,11 +65,13 @@ export async function getAllRecipes(db: SQLiteDatabase): Promise<Recipe[]> {
 export async function insertRecipe(db: SQLiteDatabase, recipe: NewRecipe): Promise<Recipe> {
   const image = await persistImage(recipe.image);
   const result = await db.runAsync(
-    'INSERT INTO recipes (title, instructions, image, ingredients, created_at) VALUES (?, ?, ?, ?, ?)',
+    'INSERT INTO recipes (title, instructions, image, ingredients, ready_in_minutes, servings, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
     recipe.title,
     recipe.instructions,
     image,
     JSON.stringify(recipe.ingredients),
+    recipe.readyInMinutes,
+    recipe.servings,
     Date.now()
   );
   return { ...recipe, id: result.lastInsertRowId, image: resolveImageUri(image) };
@@ -83,11 +95,13 @@ export async function updateRecipe(db: SQLiteDatabase, id: number, recipe: NewRe
   const imageChanged = recipe.image !== resolveImageUri(oldImage);
   const image = imageChanged ? await persistImage(recipe.image) : oldImage;
   await db.runAsync(
-    'UPDATE recipes SET title = ?, instructions = ?, image = ?, ingredients = ? WHERE id = ?',
+    'UPDATE recipes SET title = ?, instructions = ?, image = ?, ingredients = ?, ready_in_minutes = ?, servings = ? WHERE id = ?',
     recipe.title,
     recipe.instructions,
     image,
     JSON.stringify(recipe.ingredients),
+    recipe.readyInMinutes,
+    recipe.servings,
     id
   );
   if (imageChanged && oldImage) deleteImage(oldImage);
@@ -113,14 +127,16 @@ function rowToRecipe(row: RecipeRow): Recipe {
     instructions: row.instructions,
     image: resolveImageUri(row.image),
     ingredients,
+    readyInMinutes: row.ready_in_minutes,
+    servings: row.servings,
   };
 }
 
 // Copies a picked image into app storage and returns the stored file name.
 // Only the name is stored because the documents path can change between
-// app updates on iOS.
+// app updates on iOS. Web URLs (e.g. Discover recipes) are stored as-is.
 async function persistImage(uri: string): Promise<string> {
-  if (!uri || Platform.OS === 'web') return uri;
+  if (!uri || Platform.OS === 'web' || /^https?:/.test(uri)) return uri;
 
   imagesDir.create({ idempotent: true, intermediates: true });
   const source = new File(uri);

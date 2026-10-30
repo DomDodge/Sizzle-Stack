@@ -5,8 +5,7 @@ import { fieldBorder } from '../../constants/Styles';
 import { useColors } from '../../context/recipe_context';
 import BottomSheet from '../ui/BottomSheet';
 import { AppText } from '../AppText';
-
-const UNITS = ['tsp', 'tbsp', 'cup', 'oz', 'lb', 'g', 'ml', 'clove', 'pinch', 'piece'];
+import { UNITS } from '../../utils/ingredients';
 
 interface UnitPickerProps {
   value: string;

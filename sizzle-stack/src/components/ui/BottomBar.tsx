@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    gap: 10,
     borderTopWidth: 1,
   },
 });

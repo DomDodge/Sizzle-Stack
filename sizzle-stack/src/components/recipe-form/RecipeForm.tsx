@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { RecipeFormState } from '../../hooks/useRecipeForm';
 import TextField from '../ui/TextField';
 import ImageInput from './ImageInput';
@@ -15,6 +15,26 @@ export default function RecipeForm({ form }: { form: RecipeFormState }) {
         returnKeyType="done"
       />
       <ImageInput image={form.image} onChangeImage={form.setImage} />
+      <View style={styles.row}>
+        <View style={styles.half}>
+          <TextField
+            label="Time (min)"
+            placeholder="e.g., 30"
+            value={form.readyInMinutes}
+            onChangeText={form.setReadyInMinutes}
+            keyboardType="number-pad"
+          />
+        </View>
+        <View style={styles.half}>
+          <TextField
+            label="Serves"
+            placeholder="e.g., 4"
+            value={form.servings}
+            onChangeText={form.setServings}
+            keyboardType="number-pad"
+          />
+        </View>
+      </View>
       <IngredientsInput ingredients={form.ingredients} onChangeIngredients={form.setIngredients} />
       <TextField
         label="Instructions"
@@ -32,4 +52,6 @@ export default function RecipeForm({ form }: { form: RecipeFormState }) {
 
 const styles = StyleSheet.create({
   multiline: { height: 120 },
+  row: { flexDirection: 'row', gap: 12 },
+  half: { flex: 1 },
 });

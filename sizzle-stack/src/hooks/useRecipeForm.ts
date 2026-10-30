@@ -13,9 +13,10 @@ export function useRecipeForm(onSaved: () => void, existing?: Recipe) {
     existing?.ingredients.length ? existing.ingredients : [emptyIngredient()]
   );
   const [instructions, setInstructions] = useState(existing?.instructions ?? '');
+  const [readyInMinutes, setReadyInMinutes] = useState(existing?.readyInMinutes?.toString() ?? '');
+  const [servings, setServings] = useState(existing?.servings?.toString() ?? '');
   const [saving, setSaving] = useState(false);
 
-  // Validation: Title present, at least one ingredient with a non-empty name, and instructions present
   const isFormValid =
     title.trim().length > 0 &&
     ingredients.some((item) => item.name.trim().length > 0) &&
@@ -32,6 +33,8 @@ export function useRecipeForm(onSaved: () => void, existing?: Recipe) {
         ingredients: ingredients.filter((item) => item.name.trim() !== ''),
         image,
         instructions: instructions.trim(),
+        readyInMinutes: toCount(readyInMinutes),
+        servings: toCount(servings),
       };
       await (existing ? updateRecipe(existing.id, recipe) : addRecipe(recipe));
       onSaved();
@@ -47,8 +50,15 @@ export function useRecipeForm(onSaved: () => void, existing?: Recipe) {
     image, setImage,
     ingredients, setIngredients,
     instructions, setInstructions,
+    readyInMinutes, setReadyInMinutes,
+    servings, setServings,
     saving, isFormValid, submit,
   };
 }
+
+const toCount = (text: string) => {
+  const n = parseInt(text, 10);
+  return n > 0 ? n : null;
+};
 
 export type RecipeFormState = ReturnType<typeof useRecipeForm>;

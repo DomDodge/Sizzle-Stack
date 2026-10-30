@@ -5,14 +5,15 @@ import { Colors } from '../../constants/Colors';
 import { Recipe } from '../../context/recipe_context';
 import { AppText } from '../AppText';
 
-export default function RecipeCard({ recipe }: { recipe: Recipe }) {
+// Opens the recipe's detail screen unless an onPress is given.
+export default function RecipeCard({ recipe, onPress }: { recipe: Recipe; onPress?: () => void }) {
   const router = useRouter();
   const { id, title, image } = recipe;
 
   return (
     <Pressable
       style={styles.card}
-      onPress={() => router.push({ pathname: '/recipe-detail', params: { id: String(id) } })}
+      onPress={onPress ?? (() => router.push({ pathname: '/recipe-detail', params: { id: String(id) } }))}
     >
       <ImageBackground
         source={image ? { uri: image } : undefined}
