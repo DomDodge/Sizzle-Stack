@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Alert } from 'react-native';
 import { Ingredient, Recipe, useRecipes } from '../context/recipe_context';
 import { emptyIngredient } from '../utils/ingredients';
+import { prepareRecipe } from '../utils/recipes';
 
 // Holds the recipe form state and saves it to the database.
 // Pass an existing recipe to edit it instead of creating a new one.
@@ -17,30 +18,19 @@ export function useRecipeForm(onSaved: () => void, existing?: Recipe) {
   const [servings, setServings] = useState(existing?.servings?.toString() ?? '');
   const [saving, setSaving] = useState(false);
 
-  const isFormValid =
-    title.trim().length > 0 &&
-    ingredients.some((item) => item.name.trim().length > 0) &&
-    instructions.trim().length > 0 &&
-    !saving;
+  const recipe = prepareRecipe({ title, image, ingredients, instructions, readyInMinutes, servings });
+  const isFormValid = !!recipe && !saving;
 
   const submit = async () => {
-    if (!isFormValid) return;
+    if (!recipe || saving) return;
 
     setSaving(true);
     try {
-      const recipe = {
-        title: title.trim(),
-        ingredients: ingredients.filter((item) => item.name.trim() !== ''),
-        image,
-        instructions: instructions.trim(),
-        readyInMinutes: toCount(readyInMinutes),
-        servings: toCount(servings),
-      };
       await (existing ? updateRecipe(existing.id, recipe) : addRecipe(recipe));
       onSaved();
     } catch (e) {
       console.warn('Failed to save recipe', e);
-      Alert.alert('Could not save recipe', 'Please try again.');
+      Alert.alert('Could not save recipe', e instanceof Error ? e.message : String(e));
       setSaving(false);
     }
   };
@@ -55,10 +45,5 @@ export function useRecipeForm(onSaved: () => void, existing?: Recipe) {
     saving, isFormValid, submit,
   };
 }
-
-const toCount = (text: string) => {
-  const n = parseInt(text, 10);
-  return n > 0 ? n : null;
-};
 
 export type RecipeFormState = ReturnType<typeof useRecipeForm>;

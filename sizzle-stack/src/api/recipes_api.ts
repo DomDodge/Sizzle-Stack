@@ -1,13 +1,8 @@
 import { Recipe } from '../context/recipe_context';
 import { normalizeUnit } from '../utils/ingredients';
 
-const BASE_URL = 'https://api.spoonacular.com';
-// const API_KEY = process.env.EXPO_PUBLIC_RECIPE_API_KEY;
-// Temporarilly putting this in plain text
-// until assignment is graded.
-const API_KEY = "4f7eaf4ee30f4445a6f3705337526191";
+const SEARCH_URL = 'https://dominicdodge.com/sizzle/search.php';
 
-// The parts of a Spoonacular search result that we use.
 interface SpoonacularRecipe {
   id: number;
   title: string;
@@ -18,19 +13,8 @@ interface SpoonacularRecipe {
   analyzedInstructions?: { steps: { step: string }[] }[];
 }
 
-// Spoonacular recipe search: https://spoonacular.com/food-api/docs#Search-Recipes-Complex
-// The extra flags include ingredients, steps, time and servings in each result.
 export async function searchRecipes(query: string): Promise<Recipe[]> {
-  const params = [
-    `query=${encodeURIComponent(query)}`,
-    'number=10',
-    'addRecipeInformation=true',
-    'fillIngredients=true',
-    'instructionsRequired=true',
-  ].join('&');
-  const res = await fetch(`${BASE_URL}/recipes/complexSearch?${params}`, {
-    headers: { 'x-api-key': API_KEY ?? '' },
-  });
+  const res = await fetch(`${SEARCH_URL}?query=${encodeURIComponent(query)}`);
   if (!res.ok) throw new Error(`Request failed: ${res.status}`);
   const data: { results: SpoonacularRecipe[] } = await res.json();
   const recipes = data.results.map(toRecipe);

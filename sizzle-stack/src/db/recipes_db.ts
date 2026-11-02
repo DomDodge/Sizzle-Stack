@@ -5,7 +5,7 @@ import type { Ingredient, NewRecipe, Recipe } from '../context/recipe_context';
 
 export const DATABASE_NAME = 'sizzle-stack.db';
 
-const DATABASE_VERSION = 2;
+const DATABASE_VERSION = 3;
 
 // Picked photos live in the image picker's cache, which the OS can clear,
 // so they are copied into the app's document directory before being saved.
@@ -44,12 +44,15 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
     currentVersion = 1;
   }
 
-  if (currentVersion === 1) {
-    await db.execAsync(`
-      ALTER TABLE recipes ADD COLUMN ready_in_minutes INTEGER;
-      ALTER TABLE recipes ADD COLUMN servings INTEGER;
-    `);
-    currentVersion = 2;
+  // Versions 1 and 2: add the time and servings columns. Some databases were
+  // marked as version 2 during development without getting these columns,
+  // so this checks which columns exist instead of trusting the version number.
+  if (currentVersion < 3) {
+    const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(recipes)');
+    const has = (name: string) => columns.some((c) => c.name === name);
+    if (!has('ready_in_minutes')) await db.execAsync('ALTER TABLE recipes ADD COLUMN ready_in_minutes INTEGER');
+    if (!has('servings')) await db.execAsync('ALTER TABLE recipes ADD COLUMN servings INTEGER');
+    currentVersion = 3;
   }
 
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
