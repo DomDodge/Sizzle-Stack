@@ -1,4 +1,5 @@
 import { Image, Keyboard, Pressable, StyleSheet } from 'react-native';
+import { Colors } from '../../constants/Colors';
 import { fieldBorder } from '../../constants/Styles';
 import { pickRecipeImage } from '../../utils/pickRecipeImage';
 import EmptyState from '../ui/EmptyState';
@@ -19,7 +20,13 @@ export default function ImageInput({ image, onChangeImage }: ImageInputProps) {
 
   return (
     <FormField label="Photo">
-      <Pressable style={styles.picker} onPress={handlePress}>
+      <Pressable
+        style={styles.picker}
+        onPress={handlePress}
+        android_ripple={{ color: Colors.rippleNeutral, foreground: true }}
+        accessibilityRole="button"
+        accessibilityLabel={image ? 'Change photo' : 'Add a photo'}
+      >
         {image ? (
           <>
             <Image source={{ uri: image }} style={styles.preview} />

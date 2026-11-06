@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { ImageBackground, Pressable, StyleSheet } from 'react-native';
+import { Colors } from '../../constants/Colors';
 import { useColors } from '../../context/recipe_context';
 
 interface RecipeHeroImageProps {
@@ -12,7 +13,14 @@ interface RecipeHeroImageProps {
 export default function RecipeHeroImage({ image, uploading, onPress }: RecipeHeroImageProps) {
   const c = useColors();
   return (
-    <Pressable onPress={onPress} disabled={uploading || !onPress}>
+    <Pressable
+      onPress={onPress}
+      disabled={uploading || !onPress}
+      android_ripple={onPress ? { color: Colors.rippleNeutral, foreground: true } : undefined}
+      accessibilityRole={onPress ? 'button' : 'image'}
+      accessibilityLabel={onPress ? (image ? 'Change photo' : 'Add photo') : 'Recipe photo'}
+      accessibilityState={{ disabled: uploading || !onPress, busy: uploading }}
+    >
       <ImageBackground source={image ? { uri: image } : undefined} style={[styles.image, { backgroundColor: c.border }]}>
         <LinearGradient
                   colors={[c.opaque, c.background]}

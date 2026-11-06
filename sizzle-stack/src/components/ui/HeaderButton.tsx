@@ -13,7 +13,14 @@ interface HeaderButtonProps {
 // Icon + text button for the right side of a header, e.g. "Done" or "Edit".
 export default function HeaderButton({ label, icon, onPress }: HeaderButtonProps) {
   return (
-    <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={onPress} hitSlop={8}>
+    <Pressable
+      style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+      onPress={onPress}
+      hitSlop={8}
+      android_ripple={{ color: Colors.rippleNeutral }}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
       <Ionicons name={icon} size={22} color={Colors.link} />
       <AppText variant="button" style={styles.text}>{label}</AppText>
     </Pressable>

@@ -14,6 +14,9 @@ export default function RecipeCard({ recipe, onPress }: { recipe: Recipe; onPres
     <Pressable
       style={styles.card}
       onPress={onPress ?? (() => router.push({ pathname: '/recipe-detail', params: { id: String(id) } }))}
+      android_ripple={{ color: Colors.rippleOnBrand, foreground: true }}
+      accessibilityRole="button"
+      accessibilityLabel={title}
     >
       <ImageBackground
         source={image ? { uri: image } : undefined}

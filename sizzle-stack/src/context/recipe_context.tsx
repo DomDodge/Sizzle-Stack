@@ -34,6 +34,7 @@ interface GroceryContextType {
   addItems: (ingredients: Ingredient[]) => void;
   toggleItem: (id: string) => void;
   removeItem: (id: string) => void;
+  restoreItem: (item: GroceryItem, index: number) => void;
   clearList: () => void;
 }
 
@@ -81,10 +82,14 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
 
   const removeItem = (id: string) => setItems((prev) => prev.filter((i) => i.id !== id));
 
+  // Puts a removed item back where it was, keeping its id and checked state.
+  const restoreItem = (item: GroceryItem, index: number) =>
+    setItems((prev) => [...prev.slice(0, index), item, ...prev.slice(index)]);
+
   const clearList = () => setItems([]);
 
   return (
-    <GroceryContext.Provider value={{ items, addItems, toggleItem, removeItem, clearList }}>
+    <GroceryContext.Provider value={{ items, addItems, toggleItem, removeItem, restoreItem, clearList }}>
       {children}
     </GroceryContext.Provider>
   );

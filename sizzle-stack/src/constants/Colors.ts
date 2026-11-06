@@ -6,6 +6,8 @@ export const Colors = {
   mintGreen: '#81C784',       // Soft Badges / Highlights
   link: '#0A84FF',            // Text buttons
   danger: '#FF3B30',          // Destructive actions
+  rippleOnBrand: 'rgba(255, 255, 255, 0.3)',  // Android ripple on orange buttons
+  rippleNeutral: 'rgba(128, 128, 128, 0.25)', // Android ripple on surfaces, either theme
 };
 
 // Colors that change with the theme. Read them with useColors() from context/recipe_context.

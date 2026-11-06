@@ -18,6 +18,10 @@ export default function PrimaryButton({ label, onPress, disabled, style, textSty
       style={({ pressed }) => [styles.button, style, pressed && styles.pressed, disabled && { backgroundColor: c.disabled }]}
       onPress={onPress}
       disabled={disabled}
+      android_ripple={{ color: Colors.rippleOnBrand }}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: !!disabled }}
     >
       <AppText variant="button" style={[styles.text, textStyle, disabled && styles.textDisabled]}>{label}</AppText>
     </Pressable>
@@ -31,6 +35,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden', // Keeps the Android ripple inside the rounded corners
   },
   pressed: { opacity: 0.8 },
   text: { color: '#FFF' },

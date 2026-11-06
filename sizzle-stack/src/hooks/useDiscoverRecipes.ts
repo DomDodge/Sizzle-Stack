@@ -1,25 +1,39 @@
-import { useState } from 'react';
-import { searchRecipes } from '../api/recipes_api';
+import { useRef, useState } from 'react';
+import { getRecipesByCuisine, searchRecipes } from '../api/recipes_api';
 import { Recipe } from '../context/recipe_context';
 
-// Runs a recipe search on demand and tracks its result, loading and error state.
+// Runs recipe requests on demand and tracks their result, loading and error state.
 export function useDiscoverRecipes() {
   const [results, setResults] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const latestRequest = useRef(0);
 
-  const search = async (query: string) => {
-    if (!query.trim()) return;
+  // Only the newest request updates the screen, so a slow older response can't replace it.
+  const run = async (request: () => Promise<Recipe[]>) => {
+    const requestId = ++latestRequest.current;
     setLoading(true);
     setError(null);
     try {
-      setResults(await searchRecipes(query.trim()));
+      const recipes = await request();
+      if (requestId === latestRequest.current) setResults(recipes);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      if (requestId === latestRequest.current) {
+        setResults([]);
+        setError(e instanceof Error ? e.message : String(e));
+      }
     } finally {
-      setLoading(false);
+      if (requestId === latestRequest.current) setLoading(false);
     }
   };
 
-  return { results, loading, error, search };
+  const search = (query: string) => {
+    if (query.trim()) run(() => searchRecipes(query.trim()));
+  };
+
+  const browseCuisine = (cuisine: string) => {
+    run(() => getRecipesByCuisine(cuisine));
+  };
+
+  return { results, loading, error, search, browseCuisine };
 }

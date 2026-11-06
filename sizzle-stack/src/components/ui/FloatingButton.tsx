@@ -15,6 +15,7 @@ export default function FloatingButton({ icon, label, onPress }: FloatingButtonP
     <Pressable
       style={({ pressed }) => [styles.button, pressed && styles.pressed]}
       onPress={onPress}
+      android_ripple={{ color: Colors.rippleOnBrand, borderless: true, radius: 30 }}
       accessibilityRole="button"
       accessibilityLabel={label}
     >

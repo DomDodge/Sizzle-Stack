@@ -13,17 +13,31 @@ interface GroceryRowProps {
 
 export default function GroceryRow({ item, onToggle, onRemove }: GroceryRowProps) {
   const c = useColors();
+  const text = formatIngredient(item);
   return (
     <View style={[styles.row, { backgroundColor: c.surface, borderColor: c.border }]}>
-      <Pressable style={styles.main} onPress={onToggle}>
+      <Pressable
+        style={styles.main}
+        onPress={onToggle}
+        android_ripple={{ color: Colors.rippleNeutral }}
+        accessibilityRole="checkbox"
+        accessibilityLabel={text}
+        accessibilityState={{ checked: item.checked }}
+      >
         <Ionicons
           name={item.checked ? 'checkbox' : 'square-outline'}
           size={24}
           color={item.checked ? Colors.freshGreen : c.textMuted}
         />
-        <AppText style={[styles.text, item.checked && [styles.checked, { color: c.textMuted }]]}>{formatIngredient(item)}</AppText>
+        <AppText style={[styles.text, item.checked && [styles.checked, { color: c.textMuted }]]}>{text}</AppText>
       </Pressable>
-      <Pressable onPress={onRemove} hitSlop={8}>
+      <Pressable
+        onPress={onRemove}
+        hitSlop={14}
+        android_ripple={{ color: Colors.rippleNeutral, borderless: true, radius: 24 }}
+        accessibilityRole="button"
+        accessibilityLabel={`Remove ${text}`}
+      >
         <Ionicons name="trash-outline" size={20} color={c.textMuted} />
       </Pressable>
     </View>
